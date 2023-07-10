@@ -1,6 +1,5 @@
-const sendBtn = document.querySelector('#send__btn');
-const getBtn = document.querySelector('#get__btn');
-const findBtn = document.querySelector('#find__btn');
+const registerBtn = document.querySelector('#register__btn');
+const loginBtn = document.querySelector('#login__btn');
 let userNameField = document.querySelector('#uname');
 let passwordField = document.querySelector('#psword');
 
@@ -17,14 +16,14 @@ const getDataFromForm = () =>{
     user.password = passwordField.value;    
 };
 
-sendBtn.addEventListener('click', (event)=>{
+registerBtn.addEventListener('click', (event)=>{
     event.preventDefault();
     getDataFromForm();
     console.log(user)
-    sendUser();
+    registerUser();
 });
 
-const sendUser = async () =>{
+const registerUser = async () =>{
     try {
         const response = await fetch(baseURL,{
             method:"POST",
@@ -43,34 +42,14 @@ const sendUser = async () =>{
     };
 };
 
-getBtn.addEventListener('click', (event) =>{
-    event.preventDefault();
-    getDataFromServer();
-});
 
-findBtn.addEventListener('click', (event) =>{
+loginBtn.addEventListener('click', (event) =>{
     event.preventDefault();
     getDataFromForm();
-    findDataFromServer();
+    sendLoginRequest();
 });
 
-const getDataFromServer = async () =>{
-    try {
-        const response = await fetch(baseURL, {
-            method:"GET"
-        });
-        if(!response.ok){
-            const message = response.status;
-            throw new Error(message);
-        }
-        const data = await response.json();
-        console.log(data);
-    } catch (error) {
-        console.log(error);
-    };
-};
-
-const findDataFromServer = async ()  =>{
+const sendLoginRequest = async ()  =>{
     try {
         const response = await fetch(authURL,{
             method: "POST",
