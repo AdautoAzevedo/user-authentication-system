@@ -2,14 +2,10 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../dbConnector');
 const registerController = require('../../controllers/registerController');
-
+const verifyJWT = require('../../middleware/verifyJWT');
 
 router.route('/')
-    .get(async (req, res) =>{
-        const [users] = await db.query('SELECT * FROM users');
-        console.log(users);
-        return res.json(users);
-    })
+    .get(verifyJWT, registerController.getAllUsers)
     .post(registerController.registerNewUser);
 
 module.exports = router;

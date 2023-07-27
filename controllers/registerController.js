@@ -1,6 +1,12 @@
 const db = require('../dbConnector');
 const bcrypt = require('bcrypt');
 
+const getAllUsers = async (req, res) =>{
+    const [users] = await db.query('SELECT * FROM users');
+    console.log(users);
+    return res.json(users);
+}
+
 const registerNewUser = async (req, res) =>{
     const {userName, password} = req.body;
     try {
@@ -12,4 +18,4 @@ const registerNewUser = async (req, res) =>{
     }
 };
 
-module.exports = {registerNewUser};
+module.exports = {getAllUsers, registerNewUser};
