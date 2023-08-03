@@ -1,4 +1,4 @@
-const loginBtn = document.querySelector('#login__btn');
+const registerBtn = document.querySelector('#register__btn');
 let userNameField = document.querySelector('#uname');
 let passwordField = document.querySelector('#psword');
 
@@ -7,35 +7,36 @@ const user = {
     password: ''
 };
 
-const authURL = "http://localhost:3500/auth";
+const baseURL = "http://localhost:3500/api";
 
 const getDataFromForm = () =>{
     user.userName = userNameField.value;
     user.password = passwordField.value;    
 };
 
-loginBtn.addEventListener('click', (event) =>{
+registerBtn.addEventListener('click', (event)=>{
     event.preventDefault();
     getDataFromForm();
-    sendLoginRequest();
+    console.log(user)
+    registerUser();
 });
 
-const sendLoginRequest = async ()  =>{
+
+const registerUser = async () =>{
     try {
-        const response = await fetch(authURL,{
-            method: "POST",
+        const response = await fetch(baseURL,{
+            method:"POST",
             headers:{
                 "Content-type":"application/json"
-            },
+            }, 
             body:JSON.stringify(user)
         });
         if(!response.ok){
             const message = response.status;
             throw new Error(message);
         }
-        const data = await response.json();
-        console.log(data);
+        console.log("Enviado + ", user);
     } catch (error) {
         console.log(error);
-    }
+    };
 };

@@ -8,7 +8,7 @@ const handleAuth = async (req, res)=>{
     try {
         const [user] = await db.query('SELECT * FROM users WHERE userName = (?)', [userName]);
         if(!user) return res.status(401); //Unauthorized
-    
+        console.log(user);
         const match = await bcrypt.compare(password, user[0].password);
         if (match) {
             //create JWT
@@ -29,7 +29,8 @@ const handleAuth = async (req, res)=>{
             res.cookie('jwt', refreshToken, {httpOnly:true, maxAge: 24*60*60*1000});
             res.json({accessToken});
         } else{
-            return res.status(401);
+            console.log("error ao autenticar");
+            return res.sendStatus(401);
         }
     } catch (error) { 
         res.status(500).json({'message': error.message});        

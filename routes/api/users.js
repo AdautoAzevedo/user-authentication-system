@@ -5,7 +5,6 @@ const registerController = require('../../controllers/registerController');
 const verifyJWT = require('../../middleware/verifyJWT');
 
 router.route('/')
-    .get(verifyJWT, registerController.getAllUsers)
     .post(registerController.registerNewUser);
 
 module.exports = router;

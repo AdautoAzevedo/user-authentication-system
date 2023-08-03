@@ -18,6 +18,7 @@ const handleLogout = async (req, res)=>{
         await db.query('UPDATE users Set refreshToken = NULL WHERE userName = (?) ', [user[0].userName]); 
         res.clearCookie('jwt', {httpOnly:true, maxAge: 24*60*60*1000})
         res.sendStatus(204);
+        console.log("Logout sucessful");
     } catch (error) { 
         res.status(500).json({'message': error.message});        
     }
