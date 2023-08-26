@@ -9,4 +9,4 @@ const allowCredentials = (req, res, next) => {
     next();
 }
 
-module.exports = allowCredentials
+module.exports = allowCredentials;
