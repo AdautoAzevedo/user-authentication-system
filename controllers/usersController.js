@@ -1,9 +1,9 @@
 /* TEST */
-const db = require('../dbConnector');
+const Users = require('../model/users');
 
 const getUserNames = async (req, res) =>{
     try {
-        const users = await db.query('SELECT userName FROM users');
+        const users = await Users.findAll();
         return res.json(users);
     } catch (error) {
         console.log("ERROR: " + error.message);

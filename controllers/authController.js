@@ -1,30 +1,39 @@
-const db = require('../dbConnector');
+const Users = require('../model/users');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 const handleAuth = async (req, res)=>{
     const {userName, password} = req.body;
+
     try {
-        const [user] = await db.query('SELECT * FROM users WHERE userName = (?)', [userName]);
+        const user = await Users.findOne({
+            where: {
+                userName: userName
+            },
+        });
+
         if(!user) return res.status(401); //Unauthorized
 
-        const match = await bcrypt.compare(password, user[0].password);
+        const match = await bcrypt.compare(password, user.password);
         if (match) {
             //create JWT
             const accessToken = jwt.sign(
-                {"username": user[0].userName},
+                {"userName": user.userName},
                 process.env.ACCESS_TOKEN_SECRET,
                 {expiresIn: '10m'}
             )
             const refreshToken = jwt.sign(
-                {"username": user[0].userName},
+                {"userName": user.userName},
                 process.env.REFRESH_TOKEN_SECRET,
                 {expiresIn: '1d'}
             )
             
             //Store the refresh token in the database
-            await db.query('UPDATE users SET refreshToken = (?) WHERE userName = (?)', [refreshToken, userName]);
+            await Users.update(
+                {refreshToken: refreshToken},
+                {where: {userName: userName}}
+            );
             
             res.cookie('jwt', refreshToken, {httpOnly: true, sameSite: 'none', secure: true, maxAge: 24*60*60*1000});
             res.json({accessToken});

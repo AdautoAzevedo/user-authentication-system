@@ -1,4 +1,4 @@
-const db = require('../dbConnector');
+const Users = require('../model/users');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
@@ -9,13 +9,22 @@ const handleLogout = async (req, res)=>{
 
     try {
         //Search for the Refresh Token in the db
-        const [user] = await db.query('SELECT * FROM users WHERE refreshToken = (?)', [refreshToken]);
+        const user = await Users.findOne({
+            where:{
+                refreshToken: refreshToken
+            },
+        });
         if(!user){
-            res.clearCookie('jwt', {httpOnly:true, sameSite:'none', secure:true, maxAge: 24*60*60*1000})
+            res.clearCookie('jwt', {httpOnly:true, sameSite:'none', secure:true, maxAge: 24*60*60*1000});
             return res.sendStatus(204);
         } 
+
         //Delete the Refresh token in the db
-        await db.query('UPDATE users Set refreshToken = NULL WHERE userName = (?) ', [user[0].userName]); 
+        await Users.update(
+            {refreshToken:null},
+            {where: {id: user.id}}
+        );
+        
         res.clearCookie('jwt', {httpOnly:true, sameSite:'none', secure:true, maxAge: 24*60*60*1000})
         res.sendStatus(204);
 

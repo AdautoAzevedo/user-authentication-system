@@ -1,4 +1,4 @@
-const db = require('../dbConnector');
+const Users = require('../model/users');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
@@ -11,7 +11,11 @@ const handleRefreshToken = async (req, res)=>{
     const refreshToken = cookies.jwt;
 
     try {
-        const [user] = await db.query('SELECT * FROM users WHERE refreshToken = (?)', [refreshToken]);
+        const user = await Users.findOne({
+            where: {
+                refreshToken: refreshToken
+            },
+        });
         if(!user) return res.status(403); //Forbidden
         
         //Evaluate JWTs
@@ -19,9 +23,9 @@ const handleRefreshToken = async (req, res)=>{
             refreshToken,
             process.env.REFRESH_TOKEN_SECRET,
             (err, decoded) =>{
-                if(err || user[0].userName !== decoded.username) return res.sendStatus(403);
+                if(err || user.userName !== decoded.username) return res.sendStatus(403);
                 const accessToken = jwt.sign(
-                    {"username": decoded.username},
+                    {"userName": decoded.userName},
                     process.env.ACCESS_TOKEN_SECRET,
                     {expiresIn: '10m'}
                 );
